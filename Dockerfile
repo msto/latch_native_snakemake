@@ -47,12 +47,12 @@ run mamba env create \
     --name latch_native_snakemake
 env PATH=/opt/conda/envs/latch_native_snakemake/bin:$PATH
 
+RUN /opt/conda/envs/latch_native_snakemake/bin/pip install fgpyo==0.3.0
+
 
 # Copy workflow data (use .dockerignore to skip files)
 
 copy . /root/
-
-RUN mamba env update --file /root/environment.yml --name latch_native_snakemake
 
 # Latch snakemake workflow entrypoint
 # DO NOT CHANGE

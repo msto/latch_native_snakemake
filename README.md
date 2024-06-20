@@ -53,4 +53,4 @@ I made the following modifications to the default file contents:
 - `Dockerfile`: I update the conda environment created by the Dockerfile to include the additional dependencies specified in my `environment.yml`
   https://github.com/msto/latch_native_snakemake/blob/f55851f22151ade56317406ae114e296b641587b/Dockerfile#L55
 - `.dockerignore`: I set up an allowlist limited to the workflow and Latch files.
-- https://github.com/msto/latch_native_snakemake/blob/f55851f22151ade56317406ae114e296b641587b/.dockerignore#L1-L15
+  https://github.com/msto/latch_native_snakemake/blob/f55851f22151ade56317406ae114e296b641587b/.dockerignore#L1-L15

@@ -16,12 +16,12 @@ from latch.types.directory import LatchDir
 
 generated_parameters = {
     'metadata_tsv': SnakemakeParameter(
-        display_name='Metadata Tsv',
+        display_name='Metadata TSV',
         type=LatchFile,
     ),
     'genomes_dir': SnakemakeParameter(
-        display_name='Genomes Dir',
-        type=LatchFile,
+        display_name='Reference Genomes Directory',
+        type=LatchDir,
     ),
 }
 

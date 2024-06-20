@@ -6,12 +6,12 @@ This repository contains a minimal Snakemake workflow and Latch metadata to demo
 ## Summary
 
 The pipeline runs a short two-step scatter-gather over a list of samples provided via an input samplesheet.
-This example is intended to test the ability to load a sample manifest during Latch's JIT, and to use input functions to link metadata provided in the samplesheet to actual file paths on Latch.
+This example workflow is intended to test the ability to load a sample manifest during Latch's JIT, and to use input functions to link metadata provided in the samplesheet to actual file paths on Latch.
 
 
 ## Latch docs
 
-https://wiki.latch.bio/docs/snakemake/quickstart
+https://wiki.latch.bio/docs/snakemake/quickstart  
 https://wiki.latch.bio/docs/snakemake/tutorial
 
 ## Running the pipeline locally

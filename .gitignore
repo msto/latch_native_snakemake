@@ -7,3 +7,5 @@ results/
 .latch/
 
 __pycache__/
+
+.DS_Store

@@ -1,0 +1,16 @@
+# Ignore everything (all local data, results, analysis, and notebooks)
+*
+
+# Include the dockerfile
+!Dockerfile
+
+# Include the workflow, config, environment, and toolkit
+!Snakefile
+!config.yml
+!environment.yml
+
+# Include Latch metadata
+!latch_metadata
+!.latch
+!version
+

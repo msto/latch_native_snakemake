@@ -4,3 +4,6 @@
 logs/
 results/
 
+.latch/
+
+__pycache__/

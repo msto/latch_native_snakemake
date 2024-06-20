@@ -1,0 +1,22 @@
+name: latch_native_snakemake
+
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+
+dependencies:
+  # Base dependencies - python and snakemake
+  - conda-forge::python=3.10.14
+  - bioconda::snakemake-minimal=7.32.4
+
+  # Dev dependencies
+  - bioconda::snakefmt=0.10.2
+  - conda-forge::ruff=0.4.4
+  - conda-forge::mypy=1.10.0
+  - conda-forge::pytest=8.2.0
+
+  - conda-forge::pip=24.0
+  - pip:
+    - latch==2.46.8
+    - fgpyo==0.3.0

@@ -25,7 +25,7 @@ cd latch_native_snakemake
 mamba env create -f environment.yml
 mamba activate latch_native_snakemake
 
-snakemake -j1
+snakemake --configfile config.yml -j 1
 ```
 
 ## Running the pipeline on Latch
@@ -54,3 +54,8 @@ I made the following modifications to the default file contents:
   https://github.com/msto/latch_native_snakemake/blob/f55851f22151ade56317406ae114e296b641587b/Dockerfile#L55
 - `.dockerignore`: I set up an allowlist limited to the workflow and Latch files.
   https://github.com/msto/latch_native_snakemake/blob/f55851f22151ade56317406ae114e296b641587b/.dockerignore#L1-L15
+
+Other notes:
+- The `Snakefile` **may not** include a `configfile` directive. 
+  Specify the config at the command line for local use.
+  

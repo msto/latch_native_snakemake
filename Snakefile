@@ -5,9 +5,6 @@ from snakemake.io import Wildcards
 from fgpyo.util.metric import Metric
 
 
-configfile: "config.yml"
-
-
 @dataclass(kw_only=True, frozen=True)
 class Sample(Metric["Sample"]):
     """Represent a single line in the metadata tsv."""

@@ -13,12 +13,13 @@ class Sample(Metric["Sample"]):
     reference_id: str
 
 
-samples: dict[str, Sample] = {s.sample_id: s for s in Sample.read(Path(config["metadata_tsv"]))}
+def get_samples() -> dict[str, Sample]:
+    return {s.sample_id: s for s in Sample.read(Path(config["metadata_tsv"]))}
 
 
 def reference_fasta(wildcards: Wildcards) -> Path:
     """Return the path to a sample's reference."""
-    sample: Sample = samples[wildcards.sample]
+    sample: Sample = get_samples()[wildcards.sample]
     reference_id: str = sample.reference_id
 
     return Path(config["genomes_dir"]) / reference_id / f"{reference_id}.fna"
@@ -26,7 +27,7 @@ def reference_fasta(wildcards: Wildcards) -> Path:
 
 rule all:
     input:
-        expand("results/print_reference_path/{sample}.txt", sample=samples),
+        expand("results/print_reference_path/{sample}.txt", sample=get_samples()),
         "results/collect_reference_paths/collected_reference_paths.txt"
 
 
@@ -50,7 +51,7 @@ rule print_reference_path:
 rule collect_reference_paths:
     """Concatenate the inferred paths for all samples."""
     input:
-        printed_paths=expand("results/print_reference_path/{sample}.txt", sample=samples)
+        printed_paths=expand("results/print_reference_path/{sample}.txt", sample=get_samples())
     output:
         txt="results/collect_reference_paths/collected_reference_paths.txt"
     log:

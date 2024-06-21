@@ -21,7 +21,7 @@ arg DEBIAN_FRONTEND=noninteractive
 
 # Latch SDK
 # DO NOT REMOVE
-run pip install "latch[snakemake]"==2.46.8
+run pip install "latch[snakemake]"==2.47.0
 run mkdir /opt/latch
 
 # Install Mambaforge

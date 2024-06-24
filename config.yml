@@ -1,2 +1,2 @@
-metadata_tsv: "metadata.tsv"
+samplesheet: "samplesheet.tsv"
 genomes_dir: "genomes"

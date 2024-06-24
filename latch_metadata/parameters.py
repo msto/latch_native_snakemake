@@ -15,8 +15,8 @@ from latch.types.directory import LatchDir
 # from .parameters import generated_parameters, file_metadata
 
 generated_parameters = {
-    'metadata_tsv': SnakemakeParameter(
-        display_name='Metadata TSV',
+    'samplesheet': SnakemakeParameter(
+        display_name='Samplesheet (TSV)',
         type=LatchFile,
     ),
     'genomes_dir': SnakemakeParameter(
@@ -26,8 +26,8 @@ generated_parameters = {
 }
 
 file_metadata = {
-    'metadata_tsv': SnakemakeFileMetadata(
-        path='metadata.tsv',
+    'samplesheet': SnakemakeFileMetadata(
+        path='samplesheet.tsv',
         config=True,
         download=True,
     ),

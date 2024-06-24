@@ -7,14 +7,13 @@ from fgpyo.util.metric import Metric
 
 @dataclass(kw_only=True, frozen=True)
 class Sample(Metric["Sample"]):
-    """Represent a single line in the metadata tsv."""
-
+    """A single row in the samplesheet."""
     sample_id: str
     reference_id: str
 
 
 def get_samples() -> dict[str, Sample]:
-    return {s.sample_id: s for s in Sample.read(Path(config["metadata_tsv"]))}
+    return {s.sample_id: s for s in Sample.read(Path(config["samplesheet"]))}
 
 
 def reference_fasta(wildcards: Wildcards) -> Path:

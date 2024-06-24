@@ -65,13 +65,16 @@ def reference_fasta(wildcards: Wildcards) -> str:
     reference_id: str = sample.reference_id
 
     # Look for a pre-built reference in the configured reference genome directory.
-    prebuilt_path = prebuilt_reference_fasta(reference_id)
+    prebuilt_path: str = prebuilt_reference_fasta(reference_id)
 
     # Prepare a path to a reference file built by this workflow.
-    new_path = os.path.join("results/build_reference", reference_id, f"{reference_id}.fna")
+    new_path: str = os.path.join("results/build_reference", reference_id, f"{reference_id}.fna")
 
     if workflow_is_executing_on_latch():
-        fasta_path = prebuilt_path if latchfile_exists(prebuilt_path) else new_path
+        # Latch's JIT replaces each Latch URI in the config with a path to the local file.
+        # The `_latchfiles` field contains a mapping of each config key to the original Latch URI.
+        latch_path = os.path.join(config["_latchfiles"]["genomes_dir"], reference_id, f"{reference_id}.fna")
+        fasta_path = prebuilt_path if latchfile_exists(latch_path) else new_path
     else:
         fasta_path = prebuilt_path if os.path.exists(prebuilt_path) else new_path
 
@@ -86,15 +89,8 @@ def prebuilt_reference_fasta(reference_id: str) -> str:
     input function (for `build_reference`'s `params.destination_path`) and as a helper for the
     `reference_fasta` input function. 
     """
-    if workflow_is_executing_on_latch():
-        # Latch's JIT replaces each Latch URI in the config with a path to the local file.
-        # The `_latchfiles` field contains a mapping of each config key to the original Latch URI.
-        genomes_dir = config["_latchfiles"]["genomes_dir"]
-    else:
-        genomes_dir = config["genomes_dir"]
-
     # NB: Use `os.path` rather than `pathlib` so we don't bork a Latch URI
-    prebuilt_path = os.path.join(genomes_dir, reference_id, f"{reference_id}.fna")
+    prebuilt_path = os.path.join(config["genomes_dir"], reference_id, f"{reference_id}.fna")
 
     return prebuilt_path
 

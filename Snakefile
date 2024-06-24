@@ -83,9 +83,9 @@ def prebuilt_reference_fasta(reference_id: str) -> str:
     """
     Construct a path to a reference FASTA in the configured reference genome directory.
 
-    NB: This function accepts a `reference_id` instead of a `Wildcards` object so it can be used
-    both as an input function (for `build_reference`'s `params.destination_path`) and as a helper
-    for the `reference_fasta` input function. 
+    NB: This function accepts a `str` instead of a `Wildcards` object so it can be used both as an
+    input function (for `build_reference`'s `params.destination_path`) and as a helper for the
+    `reference_fasta` input function. 
     """
     if workflow_is_executing_on_latch():
         # Latch's JIT replaces each Latch URI in the config with a path to the local file.

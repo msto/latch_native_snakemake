@@ -71,7 +71,6 @@ def reference_fasta(wildcards: Wildcards) -> str:
     new_path = os.path.join("results/build_reference", reference_id, f"{reference_id}.fna")
 
     if workflow_is_executing_on_latch():
-        assert_path_is_latch_uri(config["_latchfiles"]["genomes_dir"])
         fasta_path = prebuilt_path if latchfile_exists(prebuilt_path) else new_path
     else:
         fasta_path = prebuilt_path if os.path.exists(prebuilt_path) else new_path

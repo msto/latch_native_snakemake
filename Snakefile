@@ -65,8 +65,8 @@ def reference_fasta(wildcards: Wildcards) -> str:
     sample: Sample = get_samples()[wildcards.sample]
     reference_id: str = sample.reference_id
 
-    # Look for a pre-built reference in the configured reference genome directory.
-    prebuilt_path: str = prebuilt_reference_fasta(reference_id)
+    # NB: Use `os.path` rather than `pathlib` so we don't bork a Latch URI
+    prebuilt_path: str = os.path.join(config["genomes_dir"], reference_id, f"{reference_id}.fna")
 
     # Prepare a path to a reference file built by this workflow.
     new_path: str = os.path.join("results/build_reference", reference_id, f"{reference_id}.fna")
@@ -82,18 +82,23 @@ def reference_fasta(wildcards: Wildcards) -> str:
     return fasta_path
 
 
-def prebuilt_reference_fasta(reference_id: str) -> str:
+def reference_cache_destination(wildcards: Wildcards) -> str:
     """
     Construct a path to a reference FASTA in the configured reference genome directory.
 
-    NB: This function accepts a `str` instead of a `Wildcards` object so it can be used both as an
-    input function (for `build_reference`'s `params.destination_path`) and as a helper for the
-    `reference_fasta` input function. 
+    This function should *only* be used when parametrizing the destination path in
+    `build_reference`. It returns a Latch URI when the workflow is executing on Latch, so the built
+    reference can be copied back to the standard location. If the function is used as an `input` to
+    any rule, things will break because rule inputs must be specified as relative local paths.
     """
-    # NB: Use `os.path` rather than `pathlib` so we don't bork a Latch URI
-    prebuilt_path = os.path.join(config["genomes_dir"], reference_id, f"{reference_id}.fna")
+    reference_id = wildcards.reference_id
 
-    return prebuilt_path
+    if workflow_is_executing_on_latch():
+        cached_path = os.path.join(config["_latchfiles"]["genomes_dir"], reference_id, f"{reference_id}.fna")
+    else:
+        cached_path = os.path.join(config["genomes_dir"], reference_id, f"{reference_id}.fna")
+
+    return cached_path
 
 
 ####################################################################################################
@@ -127,7 +132,7 @@ rule build_reference:
     output:
         fasta="results/build_reference/{reference_id}/{reference_id}.fna"
     params:
-        destination_path=lambda wildcards: prebuilt_reference_fasta(wildcards.reference_id),
+        destination_path=reference_cache_destination,
         cp_cmd=lambda wildcards: "latch cp" if workflow_is_executing_on_latch() else "cp"
     log:
         "logs/build_reference/{reference_id}.log"

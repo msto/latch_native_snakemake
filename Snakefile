@@ -6,6 +6,9 @@ from fgpyo.util.metric import Metric
 from latch.ldata.path import LPath
 
 
+####################################################################################################
+# Samplesheet utilities
+####################################################################################################
 @dataclass(kw_only=True, frozen=True)
 class Sample(Metric["Sample"]):
     """A single row in the samplesheet."""
@@ -13,10 +16,23 @@ class Sample(Metric["Sample"]):
     reference_id: str
 
 
+def get_samples() -> dict[str, Sample]:
+    return {s.sample_id: s for s in Sample.read(Path(config["samplesheet"]))}
+
+
+####################################################################################################
+# Latch utilities
+####################################################################################################
 def workflow_is_executing_on_latch() -> bool:
     """True if the workflow is executing on Latch."""
     # https://github.com/latchbio/latch/blob/51f74f8f60977306bfd884a81b1b5a9203afc411/latch/utils.py#L168
     return os.environ.get("FLYTE_INTERNAL_EXECUTION_ID") is not None
+
+
+def assert_path_is_latch_uri(path: str) -> None:
+    """Raise a ValueError if the path is not a Latch URI."""
+    if not path.startswith("latch://"):
+        raise ValueError(f"Path is not a Latch URI: {path}")
 
 
 def latchfile_exists(latch_uri: str) -> bool:
@@ -31,19 +47,20 @@ def latchfile_exists(latch_uri: str) -> bool:
     return True
 
 
-
-def assert_path_is_latch_uri(path: str) -> None:
-    """Raise a ValueError if the path is not a Latch URI"""
-    if not path.startswith("latch://"):
-        raise ValueError(f"Path is not a Latch URI: {path}")
-
-
-def get_samples() -> dict[str, Sample]:
-    return {s.sample_id: s for s in Sample.read(Path(config["samplesheet"]))}
-
-
+####################################################################################################
+# Input functions
+####################################################################################################
 def reference_fasta(wildcards: Wildcards) -> str:
-    """Return the path to a sample's reference."""
+    """
+    Return the path to a sample's reference FASTA.
+    
+    This input function permits conditional execution of `build_reference`. When a reference does
+    not exist at the expected location in the configured reference genomes directory
+    (`config['genomes_dir']`), this function returns a local path to the FASTA produced by
+    `build_reference`. Otherwise, when a reference already exists, it is returned. 
+
+    This function supports both local and Latch execution. 
+    """
     sample: Sample = get_samples()[wildcards.sample]
     reference_id: str = sample.reference_id
 
@@ -70,6 +87,9 @@ def prebuilt_reference_fasta(reference_id: str) -> str:
     return prebuilt_path
 
 
+####################################################################################################
+# Rules
+####################################################################################################
 rule all:
     input:
         expand("results/print_reference_path/{sample}.txt", sample=get_samples()),
@@ -77,7 +97,24 @@ rule all:
 
 
 rule build_reference:
-    """Build a reference and copy it to the configured reference location."""
+    """
+    Build a reference and copy it to the configured reference location.
+
+    This rule is executed conditionally. If a built reference already exists in the configured
+    reference genomes directory (`config['genomes_dir']`), the rule is **not** executed.
+    Otherwise, a new reference is built.
+
+    Output:
+        fasta: A newly constructed "reference".
+    
+    Params:
+        destination_path: The expected path to the reference in the configured reference genomes
+            directory. The built reference will be copied to this location after construction.
+        cp_cmd: The command to use to copy the reference to the reference genomes directory. If the
+            workflow is executing on Latch, the reference genomes directory is assumed to be on
+            Latch, and `latch cp` is used. Otherwise, `cp` is used to copy the file to a local
+            directory.
+    """
     output:
         fasta="results/build_reference/{reference_id}/{reference_id}.fna"
     params:
@@ -88,7 +125,8 @@ rule build_reference:
     shell:
         """
         (
-        date > {output.fasta};
+        echo ">my_ref" > {output.fasta};
+        echo "GATTACA" >> {output.fasta};
         {params.cp_cmd} {output.fasta} {params.destination_path};
         ) &> {log}
         """

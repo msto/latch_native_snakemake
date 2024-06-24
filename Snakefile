@@ -57,7 +57,7 @@ def reference_fasta(wildcards: Wildcards) -> str:
     This input function permits conditional execution of `build_reference`. When a reference does
     not exist at the expected location in the configured reference genomes directory
     (`config['genomes_dir']`), this function returns a local path to the FASTA produced by
-    `build_reference`. Otherwise, when a reference already exists, it is returned. 
+    `build_reference`. Otherwise, when a reference already exists, its path is returned. 
 
     This function supports both local and Latch execution. 
     """
@@ -80,7 +80,13 @@ def reference_fasta(wildcards: Wildcards) -> str:
 
 
 def prebuilt_reference_fasta(reference_id: str) -> str:
-    """Construct a path to a reference FASTA in the configured reference genome directory."""
+    """
+    Construct a path to a reference FASTA in the configured reference genome directory.
+
+    NB: This function accepts a `reference_id` instead of a `Wildcards` object so it can be used
+    both as an input function (for `build_reference`'s `params.destination_path`) and as a helper
+    for the `reference_fasta` input function. 
+    """
     if workflow_is_executing_on_latch():
         # Latch's JIT replaces each Latch URI in the config with a path to the local file.
         # The `_latchfiles` field contains a mapping of each config key to the original Latch URI.

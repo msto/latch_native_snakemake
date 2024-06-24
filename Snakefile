@@ -4,6 +4,7 @@ from pathlib import Path
 from snakemake.io import Wildcards
 from fgpyo.util.metric import Metric
 from latch.ldata.path import LPath
+from latch.ldata.type import LatchPathError
 
 
 ####################################################################################################

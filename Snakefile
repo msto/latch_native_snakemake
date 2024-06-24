@@ -43,8 +43,8 @@ def latchfile_exists(latch_uri: str) -> bool:
         LPath(path=latch_uri).fetch_metadata()
     except LatchPathError:
         return False
-
-    return True
+    else:
+        return True
 
 
 ####################################################################################################

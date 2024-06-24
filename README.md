@@ -58,4 +58,7 @@ I made the following modifications to the default file contents:
 Other notes:
 - The `Snakefile` **may not** include a `configfile` directive. 
   Specify the config at the command line for local use.
-  
+- The usual pattern of reading an input samplesheet must be modified so the read is wrapped in a
+  function call. After JIT, each task attempts to run all Python code present in the file outside
+  rule definitions. 
+  https://wiki.latch.bio/docs/snakemake/cloud#make-sure-shared-code-doesnt-rely-on-input-files

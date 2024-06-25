@@ -6,7 +6,14 @@ This repository contains a minimal Snakemake workflow and Latch metadata to demo
 ## Summary
 
 The pipeline runs a short two-step scatter-gather over a list of samples provided via an input samplesheet.
-This example workflow is intended to test the ability to load a sample manifest during Latch's JIT, and to use input functions to link metadata provided in the samplesheet to actual file paths on Latch.
+
+It also includes a conditional rule that will only execute if a `LatchFile` does not exist at an expected location. 
+The output of this rule is copied back to this expected location, to cache the results for future workflow executions.
+
+This example workflow is intended to test and demonstrate the following behaviors:
+- Load a sample manifest during Latch's JIT,
+- Use input functions to link metadata provided in the samplesheet to actual file paths on Latch,
+- Conditional rule execution, with cached results
 
 
 ## Latch docs
